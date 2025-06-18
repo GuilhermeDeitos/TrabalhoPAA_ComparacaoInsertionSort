@@ -1,0 +1,20 @@
+Tempo de Execução (s),Método,Multithreading
+2.092792510986328,Bucket Sort,Nao
+Tempo de Execução (s),Método,Multithreading
+2.146724224090576,Bucket Sort,Sim
+Tempo de Execução (s),Método,Multithreading
+10.726094007492065,Bucket Sort,Nao
+Tempo de Execução (s),Método,Multithreading
+9.879531621932983,Bucket Sort,Sim
+Tempo de Execução (s),Método,Multithreading
+21.461931943893433,Bucket Sort,Nao
+Tempo de Execução (s),Método,Multithreading
+21.75432252883911,Bucket Sort,Sim
+Tempo de Execução (s),Método,Multithreading
+21.562089920043945,Bucket Sort,Nao
+Tempo de Execução (s),Método,Multithreading
+24.61918067932129,Bucket Sort,Sim
+Quantidade de Elementos,Tempo de Execução (s),Método,Multithreading
+10000000,20.697562217712402,Bucket Sort,Nao
+Quantidade de Elementos,Tempo de Execução (s),Método,Multithreading
+10000000,22.277437925338745,Bucket Sort,Sim
