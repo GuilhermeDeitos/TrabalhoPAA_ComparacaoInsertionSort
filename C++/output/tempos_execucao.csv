@@ -1,0 +1,9 @@
+Quantidade de elementos: 100000
+Número de threads: 16
+Número de buckets: 100
+=== TEMPOS DE EXECUÇÃO ===
+Metodo,Tempo (segundos)
+Insertion Sort Sequencial,12.185754
+Insertion Sort Multithread,1.413304
+Bucket Sort Sequencial,0.160467
+Bucket Sort Multithread,0.270195
