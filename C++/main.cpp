@@ -9,10 +9,10 @@
 
 using namespace std;
 
-void gerarNumerosAleatorios(int v, vector<int>& lista) {
+void gerarNumerosAleatorios(int qntElementos, vector<int>& lista) {
     srand(time(0));
     int menorValor = INT_MAX;
-    for(int i=0; i<v; i++){
+    for(int i=0; i<qntElementos; i++){
         lista.push_back(rand () % 100000 + 1);
         // Atualizar o menor valor encontrado
         if(lista[i] < menorValor) {
@@ -129,34 +129,99 @@ void insertionSortMultithread(vector<int>& lista, int numThreads) {
     }
 }
 
-void encontrarMenorValorArquivo(const string& nomeArquivo, int& menorValor) {
-    FILE *file = fopen(nomeArquivo.c_str(), "r");
-    if (file == NULL) {
-        cout << "Erro ao abrir o arquivo." << endl;
-        return;
-    }
-    
-    int valor;
-    menorValor = INT_MAX; // Inicializa com o maior valor possível
+void separarBuckets(const vector<int>& lista, vector<vector<int>>& buckets, int numBuckets) {
+    int maxValue = *max_element(lista.begin(), lista.end());
+    int minValue = *min_element(lista.begin(), lista.end());
+    int range = maxValue - minValue + 1;
+    int bucketSize = range / numBuckets;
 
-    while(fscanf(file, "%d", &valor) != EOF) {
-        if(valor < menorValor) {
-            menorValor = valor;
-        }
+    for(int num : lista) {
+        int bucketIndex = (num - minValue) / bucketSize;
+        if(bucketIndex >= numBuckets) bucketIndex = numBuckets - 1; // Garantir que não exceda o número de buckets
+        buckets[bucketIndex].push_back(num);
+    }
+}
+
+void bucketSort(vector<int>& lista, int numBuckets) {
+    vector<vector<int>> buckets(numBuckets);
+    
+    // Separar os números em buckets
+    separarBuckets(lista, buckets, numBuckets);
+    
+    // Ordenar cada bucket usando insertion sort
+    for(auto& bucket : buckets) {
+        insertionSort(bucket);
     }
     
-    fclose(file);
+    // Concatenar os buckets de volta na lista original
+    lista.clear();
+    for(const auto& bucket : buckets) {
+        lista.insert(lista.end(), bucket.begin(), bucket.end());
+    }
+    // Salvar a lista ordenada em um arquivo
+    FILE *file = fopen("numeros_ordenados_bucket.txt", "w");
+    if (file != NULL) {
+        for (const auto& num : lista) {
+            fprintf(file, "%d\n", num);
+        }
+        fclose(file);
+    }
+}
+
+void bucketSortMultithread(vector<int>& lista, int numBuckets, int numThreads) {
+    vector<vector<int>> buckets(numBuckets);
+    
+    // Separar os números em buckets
+    separarBuckets(lista, buckets, numBuckets);
+    
+    vector<thread> threads;
+    
+    // Limitar o número de threads ao valor especificado
+    int threadsToUse = min(numThreads, numBuckets);
+    int bucketsPerThread = numBuckets / threadsToUse;
+    
+    // Ordenar buckets usando o número limitado de threads
+    for(int t = 0; t < threadsToUse; t++) {
+        int startBucket = t * bucketsPerThread;
+        int endBucket = (t == threadsToUse - 1) ? numBuckets : (t + 1) * bucketsPerThread;
+        
+        threads.push_back(thread([&buckets, startBucket, endBucket]() {
+            for(int i = startBucket; i < endBucket; i++) {
+                insertionSort(buckets[i]);
+            }
+        }));
+    }
+    
+    // Aguardar todas as threads terminarem
+    for(auto& t : threads) {
+        t.join();
+    }
+    
+    // Concatenar os buckets de volta na lista original
+    lista.clear();
+    for(const auto& bucket : buckets) {
+        lista.insert(lista.end(), bucket.begin(), bucket.end());
+    }
+
+    // Salvar a lista ordenada em um arquivo
+    FILE *file = fopen("numeros_ordenados_bucket_multithread.txt", "w");
+    if (file != NULL) {
+        for (const auto& num : lista) {
+            fprintf(file, "%d\n", num);
+        }
+        fclose(file);
+    }
 }
 
 int main(){
-    int v;
+int qntdElementos;
     cout << "Digite o número de elementos: ";
-    cin >> v;
+    cin >> qntdElementos;
     
     // Gerar dados uma única vez e fazer cópias para cada teste
     vector<int> dadosOriginais;
-    gerarNumerosAleatorios(v, dadosOriginais);
-    
+    gerarNumerosAleatorios(qntdElementos, dadosOriginais);
+
     // Sequencial
     vector<int> listaSequencial = dadosOriginais; // Cópia dos dados
     cout << "Iniciando a ordenação sequencial..." << endl;
@@ -180,15 +245,58 @@ int main(){
     fim = clock();
     double tempoMultithread = double(fim - inicio) / CLOCKS_PER_SEC;
     cout << "Ordenação multithread concluída em " << tempoMultithread << " segundos." << endl;
+
+    // Bucket Sort Sequencial
+    cout << "Iniciando o Bucket Sort sequencial..." << endl;
+    vector<int> listaBucketSequencial = dadosOriginais; // Cópia dos dados
+    inicio = clock();
+    int numBuckets; // Número de buckets já definido: 10, 100 e 1000
+    cout << "Digite o número de buckets: ";
+    cin >> numBuckets;
+    bucketSort(listaBucketSequencial, numBuckets);
+    fim = clock();
+    double tempoBucketSequencial = double(fim - inicio) / CLOCKS_PER_SEC;
+    cout << "Bucket Sort sequencial concluído em " << tempoBucketSequencial << " segundos." << endl;
+
+    // Bucket Sort Multithread
+    cout << "Iniciando o Bucket Sort multithread..." << endl;
+    vector<int> listaBucketMultithread = dadosOriginais; // Cópia dos dados
+    inicio = clock();
+    bucketSortMultithread(listaBucketMultithread, numBuckets, numThreads);
+    fim = clock();
+    double tempoBucketMultithread = double(fim - inicio) / CLOCKS_PER_SEC;
+    cout << "Bucket Sort multithread concluído em " << tempoBucketMultithread << " segundos." << endl;
     
+    // Salvar em um csv o tempo de execução de cada método
+    FILE *file = fopen("tempos_execucao.csv", "w");
+    if (file != NULL) {
+        fprintf(file, "Quantidade de elementos: %d\n", qntdElementos);
+        fprintf(file, "Número de threads: %d\n", numThreads);
+        fprintf(file, "Número de buckets: %d\n", numBuckets);
+        fprintf(file, "=== TEMPOS DE EXECUÇÃO ===\n");
+        fprintf(file, "Metodo,Tempo (segundos)\n");
+        fprintf(file, "Insertion Sort Sequencial,%.6f\n", tempoSequencial);
+        fprintf(file, "Insertion Sort Multithread,%.6f\n", tempoMultithread);
+        fprintf(file, "Bucket Sort Sequencial,%.6f\n", tempoBucketSequencial);
+        fprintf(file, "Bucket Sort Multithread,%.6f\n", tempoBucketMultithread);
+        fclose(file);
+        cout << "Tempos de execução salvos em tempos_execucao.csv." << endl;
+    } else {
+        cout << "Erro ao salvar os tempos de execução." << endl;
+    }   
+
     // Comparação de performance
     cout << "\n=== COMPARAÇÃO ===" << endl;
-    cout << "Tempo sequencial: " << tempoSequencial << "s" << endl;
-    cout << "Tempo multithread: " << tempoMultithread << "s" << endl;
-    if(tempoSequencial > 0) {
-        double speedup = tempoSequencial / tempoMultithread;
-        cout << "Speedup: " << speedup << "x" << endl;
-    }
+    cout << "Tempo de ordenação sequencial: " << tempoSequencial << " segundos." << endl;
+    cout << "Tempo de ordenação multithread: " << tempoMultithread << " segundos." << endl;
+    cout << "Tempo de Bucket Sort sequencial: " << tempoBucketSequencial << " segundos." << endl;
+    cout << "Tempo de Bucket Sort multithread: " << tempoBucketMultithread << " segundos." << endl;
+    cout << "Melhor método: " 
+         << (tempoSequencial < tempoMultithread ? "Sequencial" : "Multithread") 
+         << " para Insertion Sort." << endl;
+    cout << "Melhor método: "
+         << (tempoBucketSequencial < tempoBucketMultithread ? "Sequencial" : "Multithread")
+         << " para Bucket Sort." << endl;   
 
     return 0;
 }
