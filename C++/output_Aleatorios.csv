@@ -1,0 +1,44 @@
+100,0.00003500,Insertion Sort,Nao,0,1
+100,0.00119000,Insertion Sort,Sim,0,8
+100,0.00003900,BucketSort,Nao,10,1
+100,0.00054600,BucketSort,Sim,10,8
+200,0.00009700,Insertion Sort,Nao,0,1
+200,0.00048600,Insertion Sort,Sim,0,8
+200,0.00005900,BucketSort,Nao,10,1
+200,0.00058400,BucketSort,Sim,10,8
+500,0.00056100,Insertion Sort,Nao,0,1
+500,0.00056300,Insertion Sort,Sim,0,8
+500,0.00013900,BucketSort,Nao,10,1
+500,0.00051300,BucketSort,Sim,10,8
+1000,0.00315600,Insertion Sort,Nao,0,1
+1000,0.00102900,Insertion Sort,Sim,0,8
+1000,0.00035300,BucketSort,Nao,10,1
+1000,0.00068700,BucketSort,Sim,10,8
+2000,0.01420100,Insertion Sort,Nao,0,1
+2000,0.00177100,Insertion Sort,Sim,0,8
+2000,0.00152100,BucketSort,Nao,10,1
+2000,0.00125000,BucketSort,Sim,10,8
+5000,0.02899200,Insertion Sort,Nao,0,1
+5000,0.00926000,Insertion Sort,Sim,0,8
+5000,0.00273100,BucketSort,Nao,10,1
+5000,0.00267600,BucketSort,Sim,10,8
+7500,0.05570000,Insertion Sort,Nao,0,1
+7500,0.01879400,Insertion Sort,Sim,0,8
+7500,0.00658200,BucketSort,Nao,10,1
+7500,0.01459000,BucketSort,Sim,10,8
+10000,0.10002900,Insertion Sort,Nao,0,1
+10000,0.02942600,Insertion Sort,Sim,0,8
+10000,0.01077500,BucketSort,Nao,10,1
+10000,0.02430400,BucketSort,Sim,10,8
+15000,0.22567900,Insertion Sort,Nao,0,1 
+15000,0.06475100,Insertion Sort,Sim,0,8
+15000,0.02338000,BucketSort,Nao,10,1
+15000,0.06083400,BucketSort,Sim,10,8
+30000,1.22364600,Insertion Sort,Nao,0,1
+30000,0.24452100,Insertion Sort,Sim,0,8
+30000,0.08985300,BucketSort,Nao,10,1
+30000,0.13228000,BucketSort,Sim,10,8
+50000,2.63873900,Insertion Sort,Nao,0,1
+50000,0.44535000,Insertion Sort,Sim,0,8
+50000,0.24863100,BucketSort,Nao,10,1
+50000,0.33030000,BucketSort,Sim,10,8
