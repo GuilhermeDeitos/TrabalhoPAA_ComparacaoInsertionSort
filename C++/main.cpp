@@ -344,15 +344,21 @@ int main(int argc, char* argv[]) {
             cout << "\n=== Executando Insertion Sort multithread ===" << endl;
             insertionSortMultithread(listaMultithread, numThreads, n, tipo.first);
 
-            // Bucket Sort sequencial
-            vector<int> listaBucketSequencial = dadosOriginais;
-            cout << "\n=== Executando Bucket Sort sequencial ===" << endl;
-            bucketSort(listaBucketSequencial, numBuckets, n, tipo.first);
-
-            // Bucket Sort multithread
-            vector<int> listaBucketMultithread = dadosOriginais;
-            cout << "\n=== Executando Bucket Sort multithread ===" << endl;
-            bucketSortMultithread(listaBucketMultithread, numBuckets, numThreads, n, tipo.first);
+            for(int i = 10; i<=1000; i*=10){
+                // Bucket Sort sequencial
+                numBuckets = i; // Atualizar o número de buckets para o teste sequencial
+                vector<int> listaBucketSequencial = dadosOriginais;
+                cout << "\n=== Executando Bucket Sort sequencial ===" << endl;
+                bucketSort(listaBucketSequencial, numBuckets, n, tipo.first);
+            }
+            
+            for(int i = 10; i<=1000; i*=10){
+                // Bucket Sort multithread
+                numBuckets = i; // Atualizar o número de buckets para o teste multithread
+                vector<int> listaBucketMultithread = dadosOriginais;
+                cout << "\n=== Executando Bucket Sort multithread ===" << endl;
+                bucketSortMultithread(listaBucketMultithread, numBuckets, numThreads, n, tipo.first);
+            }
         }
     }
     cout << "\nTodos os métodos de ordenação foram executados com sucesso." << endl;
